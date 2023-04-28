@@ -16,6 +16,7 @@ class App extends Component {
     page: 1,
     loading: false,
     showModal: null,
+    totalItems: 0,
   };
 
   loadMore = () => {
@@ -32,7 +33,7 @@ class App extends Component {
   getImages = async query => {
     let showPage = this.state.page;
     if (this.state.searchQuery !== query) {
-      this.setState({ images: [], page: 1 });
+      this.setState({ images: [], page: 1, totalItems: 0 });
       showPage = 1;
     }
     this.setState({ loading: true, searchQuery: query });
@@ -43,6 +44,7 @@ class App extends Component {
     const resObject = await response.json();
     this.setState(prevState => ({
       images: [...prevState.images, ...resObject.hits],
+      totalItems: resObject.totalHits,
       loading: false,
     }));
   };
@@ -56,7 +58,7 @@ class App extends Component {
   };
 
   render() {
-    const showMore = this.state.images.length > 0;
+    const showMore = this.state.images.length !== this.state.totalItems;
     let showImage = null;
     if (this.state.showModal) {
       showImage = this.state.images.filter(
